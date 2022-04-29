@@ -25,7 +25,7 @@ Google Fonts supports same feature by just adding the `&display=swap` [parameter
 
 The TypeKit [https://use.typekit.net/yyj6orp.js](https://use.typekit.net/yyj6orp.js) Hosted on Adobe's CDN has `"display":"auto"` in the `window.Typekit.config` variable
 
-Using Proxy App; it can be changed to `"display":"swap"`
+Using the TypeKitProxyApp, it can be changed to `"display":"swap"` in a HTML page.
 
 ```html
 <script type="text/javascript" src="//localhost:80/yyj6orp.js"></script>
@@ -36,7 +36,7 @@ Using Proxy App; it can be changed to `"display":"swap"`
 
 The TypeKit [https://use.typekit.net/yyj6orp.css](https://use.typekit.net/yyj6orp.css) Hosted on Adobe's CDN has `font-display:auto` property for all the `@font-face`
 
-Using Proxy App; it can be changed to `"display":"swap"`
+Using the TypeKitProxyApp, it can be changed to `"display":"swap"` in a HTML page.
 
 ```html
 <link href="//localhost:80/yyj6orp.css" rel="stylesheet">
