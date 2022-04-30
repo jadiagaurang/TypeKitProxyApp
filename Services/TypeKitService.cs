@@ -17,6 +17,7 @@ namespace TypeKitProxyApp {
     public class TypeKitService : ITypeKitService {
         private readonly ILogger<TypeKitService> _logger;
         private readonly HttpClient _httpClient = null;
+        private readonly String strAdobeTypeKitHost = "https://use.typekit.com/";
         private readonly String strGroupKey = "TypeKitProxyApp";
 
         private readonly IConfiguration _config;
@@ -58,46 +59,21 @@ namespace TypeKitProxyApp {
         public async Task<String> GetTypeKitJSAsync(String strTypeKitCode) {
             String strCode = String.Empty;
             
-            String strKey = "Method=GetTypeKitAsync&strTypeKitCode=" + strTypeKitCode;
+            String strKey = strTypeKitCode;
 
-            // Step 0: Find in Local Memory!
-            strCode = (String)this._inMemoryCache.Get(strKey);
+            // Step 1: Find in Cache!
+            strCode = await this.GetCacheValue(strKey);
 
             if (String.IsNullOrEmpty(strCode)) {
-                // Step 1: Find in Memcache
-                strCode = (String)this._memcacheService.Get(strKey);
+                // Step 2: Fetch from Adobe TypeKit's Server
+                strCode = await this.GetTypeKitProjectAsync(new Uri(this.strAdobeTypeKitHost + strTypeKitCode));
 
-                if (String.IsNullOrEmpty(strCode)) {
-                    // Step 2: Find in S3 Bucket
-                    strCode = await _s3Service.GetObjectAsync(strTypeKitCode);
+                if (!String.IsNullOrEmpty(strCode)) {
+                    // Step 3: Sanitize and Compress
+                    strCode = this.getCompressedJS(this.sanitizeJS(strCode));
 
-                    if (String.IsNullOrEmpty(strCode)) {
-                        // Step 3: Fetch from Adobe TypeKit's Server
-                        strCode = await this.GetTypeKitProjectAsync(new Uri("https://use.typekit.com/" + strTypeKitCode));
-
-                        if (!String.IsNullOrEmpty(strCode)) {
-                            // Step 3.1: Sanitize and Compress
-                            strCode = this.getCompressedJS(this.sanitizeJS(strCode));
-
-                            if (!String.IsNullOrEmpty(strCode)) {
-                                // Step 4: Save to S3 Bucket
-                                Boolean blnS3SaveResult = await _s3Service.SetObjectAsync(strTypeKitCode, strCode, "text/javascript");
-
-                                // Step 5: Save to Memcache   
-                                Boolean blnMemcacheSaveResult = await this._memcacheService.SetAsync(strKey, strCode, strGroupKey);
-
-                                // Step 6: Save to Local Memory
-                                this._inMemoryCache.Set(strKey, strCode);
-                            }
-                        }
-                    }
-                    else {
-                        // Step 5: Save to Memcache
-                        Boolean blnMemcacheSaveResult = await this._memcacheService.SetAsync(strKey, strCode, strGroupKey);
-
-                        // Step 6: Save to Local Memory
-                        this._inMemoryCache.Set(strKey, strCode);
-                    }
+                    // Step 4: Save in Cache!
+                    Boolean blnCacheSaveResult = await this.SetCacheValue(strKey, strCode);
                 }
             }
 
@@ -107,46 +83,21 @@ namespace TypeKitProxyApp {
         public async Task<String> GetTypeKitCSSAsync(String strTypeKitCode) {
             String strCode = String.Empty;
             
-            String strKey = "Method=GetTypeKitAsync&strTypeKitCode=" + strTypeKitCode;
+            String strKey = strTypeKitCode;
 
-            // Step 0: Find in Local Memory!
-            strCode = (String)this._inMemoryCache.Get(strKey);
+            // Step 1: Find in Local Memory!
+            strCode = await this.GetCacheValue(strKey);
 
             if (String.IsNullOrEmpty(strCode)) {
-                // Step 1: Find in Memcache
-                strCode = (String)this._memcacheService.Get(strKey);
+                // Step 2: Fetch from Adobe TypeKit's Server
+                strCode = await this.GetTypeKitProjectAsync(new Uri(this.strAdobeTypeKitHost + strTypeKitCode));
 
-                if (String.IsNullOrEmpty(strCode)) {
-                    // Step 2: Find in S3 Bucket
-                    strCode = await _s3Service.GetObjectAsync(strTypeKitCode);
+                if (!String.IsNullOrEmpty(strCode)) {
+                    // Step 3: Sanitize and Compress
+                    strCode = this.getCompressedCSS(this.sanitizeCSS(strCode));
 
-                    if (String.IsNullOrEmpty(strCode)) {
-                        // Step 3: Fetch from Adobe TypeKit's Server
-                        strCode = await this.GetTypeKitProjectAsync(new Uri("https://use.typekit.com/" + strTypeKitCode));
-
-                        if (!String.IsNullOrEmpty(strCode)) {
-                            // Step 3.1: Sanitize and Compress
-                            strCode = this.getCompressedCSS(this.sanitizeCSS(strCode));
-
-                            if (!String.IsNullOrEmpty(strCode)) {
-                                // Step 4: Save to S3 Bucket
-                                Boolean blnS3SaveResult = await _s3Service.SetObjectAsync(strTypeKitCode, strCode, "text/css");
-
-                                // Step 5: Save to Memcache   
-                                Boolean blnMemcacheSaveResult = await this._memcacheService.SetAsync(strKey, strCode, strGroupKey);
-
-                                // Step 6: Save to Local Memory
-                                this._inMemoryCache.Set(strKey, strCode);
-                            }
-                        }
-                    }
-                    else {
-                        // Step 5: Save to Memcache
-                        Boolean blnMemcacheSaveResult = await this._memcacheService.SetAsync(strKey, strCode, strGroupKey);
-
-                        // Step 6: Save to Local Memory
-                        this._inMemoryCache.Set(strKey, strCode);   
-                    }
+                    // Step 4: Save in Cache!
+                    Boolean blnCacheSaveResult = await this.SetCacheValue(strKey, strCode);
                 }
             }
 
@@ -175,6 +126,74 @@ namespace TypeKitProxyApp {
             catch {
                 throw new WebException("Could not reach the given URL");
             }
+        }
+
+        private async Task<String> GetCacheValue (String strKey) {
+            String strCode = String.Empty;
+
+            if (!String.IsNullOrEmpty(strKey)) {
+                String strCacheEngine = this.getCacheEngine();
+                
+                if (!String.IsNullOrEmpty(strCacheEngine)) {
+                    if (strCacheEngine.Equals("inmemory", StringComparison.InvariantCultureIgnoreCase)) {
+                        strCode = (String)this._inMemoryCache.Get(strKey);
+                    }
+                    else if (strCacheEngine.Equals("memcache", StringComparison.InvariantCultureIgnoreCase)) {
+                        strCode = (String)this._memcacheService.Get(strKey);
+                    }
+                    else if (strCacheEngine.Equals("awss3", StringComparison.InvariantCultureIgnoreCase)) {
+                        strCode = await _s3Service.GetObjectAsync(strKey);
+                    }
+                }
+            }
+
+            return strCode;
+        }
+
+        private async Task<Boolean> SetCacheValue (String strKey, String strValue) {
+            Boolean blnResult = false;
+
+            if (!String.IsNullOrEmpty(strKey) && !String.IsNullOrEmpty(strValue)) {
+                String strCacheEngine = this.getCacheEngine();
+                
+                if (!String.IsNullOrEmpty(strCacheEngine)) {
+                    if (strCacheEngine.Equals("inmemory", StringComparison.InvariantCultureIgnoreCase)) {
+                        String strReturnValue = this._inMemoryCache.Set(strKey, strValue);
+
+                        if (!String.IsNullOrEmpty(strReturnValue)) {
+                            blnResult = true;
+                        }
+                    }
+                    else if (strCacheEngine.Equals("memcache", StringComparison.InvariantCultureIgnoreCase)) {
+                        blnResult = await this._memcacheService.SetAsync(strKey, strValue, strGroupKey);
+                    }
+                    else if (strCacheEngine.Equals("awss3", StringComparison.InvariantCultureIgnoreCase)) {
+                        blnResult = await _s3Service.SetObjectAsync(strKey, strValue, "text/javascript");
+                    }
+                }
+            }
+
+            return blnResult;
+        }
+
+        private String getCacheEngine () {
+            String strCacheEngine = "inmemory";    //Default Value
+
+            if (this._config != null && !String.IsNullOrEmpty(this._config.GetSection("TypeKitProxyApp:CacheEngine").Value)) {
+                switch (this._config.GetSection("TypeKitProxyApp:CacheEngine").Value) {
+                    case "local":
+                        strCacheEngine = "inmemory";
+                        break;
+                    case "memcache":
+                        strCacheEngine = "memcache";
+                        break;
+                    case "s3":
+                        strCacheEngine = "awss3";
+                        break;
+                }
+            }
+
+            return strCacheEngine;
         }
 
         private String sanitizeJS(String strJS) {
