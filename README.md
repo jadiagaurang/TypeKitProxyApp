@@ -8,7 +8,7 @@ An application to proxy Adobe TypeKit JS SDK and CSS files with `font-display` m
 
 In September 2020, TypeKit has released a font-display option via [Adobe Fonts Dashboard](https://fonts.adobe.com/my_fonts#web_projects-section) for better web performance.
 
-### Knowledge Base Article [https://helpx.adobe.com/fonts/using/font-display-settings.html](https://helpx.adobe.com/fonts/using/font-display-settings.html)
+Knowledge Base Article: [https://helpx.adobe.com/fonts/using/font-display-settings.html](https://helpx.adobe.com/fonts/using/font-display-settings.html)
 
 1. In your [web projects page](https://fonts.adobe.com/my_fonts#web_projects-section), click  Edit Project.
 ![TypeKit_List_Project](https://helpx.adobe.com/content/dam/help/en/fonts/using/font-display-settings/jcr_content/main-pars/procedure/proc_par/step_0/step_par/image/edit_project.png)
