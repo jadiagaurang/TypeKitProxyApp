@@ -6,15 +6,23 @@ An application to proxy Adobe TypeKit JS SDK and CSS files with `font-display` m
 
 ## Motivation
 
-In September 2020, TypeKit has released a font-display option via Adobe Fonts Dashboard [https://fonts.adobe.com/my_fonts#web_projects-section](https://fonts.adobe.com/my_fonts#web_projects-section) for better web performance.
+In September 2020, TypeKit has released a font-display option via [Adobe Fonts Dashboard](https://fonts.adobe.com/my_fonts#web_projects-section) for better web performance.
 
-Knowledge Base Article [https://helpx.adobe.com/fonts/using/font-display-settings.html](https://helpx.adobe.com/fonts/using/font-display-settings.html).
+### Knowledge Base Article [https://helpx.adobe.com/fonts/using/font-display-settings.html](https://helpx.adobe.com/fonts/using/font-display-settings.html)
 
-But, the same functionality is not extended to RESTful API or JS SDK.
+1. In your [web projects page](https://fonts.adobe.com/my_fonts#web_projects-section), click  Edit Project.
+![TypeKit_List_Project](https://helpx.adobe.com/content/dam/help/en/fonts/using/font-display-settings/jcr_content/main-pars/procedure/proc_par/step_0/step_par/image/edit_project.png)
+
+2. Select any of the following font-display values from the sidebar. By default, the `font-display` setting of web font projects is set to **auto**
+![TypeKit_Edit_Project](https://helpx.adobe.com/content/dam/help/en/fonts/using/font-display-settings/jcr_content/main-pars/procedure/proc_par/step_1/step_par/image/screen_shot_2020-09-10at13533pm.png)
+
+But, the same functionality **is not** extended to [RESTful API](https://fonts.adobe.com/docs/api/v1/:format/kits) or [JS Embed](https://helpx.adobe.com/fonts/using/embed-codes.html).
 
 Google Lighthouse recommends to use `font-display: swap` in `@font-face` style to avoid [FOIT](https://fonts.google.com/knowledge/glossary/foit) and [FOUT](https://fonts.google.com/knowledge/glossary/fout) in most modern browsers.
 
-Google Fonts supports same feature by just adding the `&display=swap` [parameter](https://developer.mozilla.org/docs/Learn/Common_questions/What_is_a_URL#Basics_anatomy_of_a_URL) to the end of your Google Fonts URL:
+Google Fonts supports same feature by just adding the `&display=swap` [parameter](https://developer.mozilla.org/docs/Learn/Common_questions/What_is_a_URL#Basics_anatomy_of_a_URL) to the end of your Google Fonts URL
+
+#### CSS Example
 
 ```html
 <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
