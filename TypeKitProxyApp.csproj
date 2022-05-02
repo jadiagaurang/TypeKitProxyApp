@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-	<PackageId>TypeKitProxyDotNetCore</PackageId>
-	<Version>1.0.0</Version>
-	<Authors>Gaurang Jadia</Authors>
-	<Company>GaurangJadia.com</Company>
+	  <PackageId>TypeKitProxyDotNetCore</PackageId>
+	  <Version>1.0.0</Version>
+	  <Authors>Gaurang Jadia</Authors>
+	  <Company>GaurangJadia.com</Company>
   </PropertyGroup>
 
   <ItemGroup>
