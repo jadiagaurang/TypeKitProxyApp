@@ -1,6 +1,7 @@
 # TypeKit Proxy App
 
 [![.NET](https://github.com/jadiagaurang/TypeKitProxyApp/actions/workflows/dotnet.yml/badge.svg)](https://github.com/jadiagaurang/TypeKitProxyApp/actions/workflows/dotnet.yml)
+[![Docker Image CI](https://github.com/jadiagaurang/TypeKitProxyApp/actions/workflows/docker-image.yml/badge.svg)](https://github.com/jadiagaurang/TypeKitProxyApp/actions/workflows/docker-image.yml)
 
 An application to proxy Adobe TypeKit JS SDK and CSS files with `font-display` modification to improve webpage performance.
 
