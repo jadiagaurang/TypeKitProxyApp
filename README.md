@@ -6,6 +6,14 @@
 
 An application to proxy Adobe TypeKit JS Embed and CSS files with `font-display` modification to improve webpage performance.
 
+## Demo
+[https://typekitproxy.com/](https://typekitproxy.com/)
+#### JS Example
+[https://typekitproxy.com/yyj6orp.js](https://typekitproxy.com/yyj6orp.js)
+#### CSS Example
+[https://typekitproxy.com/yyj6orp.css](https://typekitproxy.com/yyj6orp.css)
+
+
 ## Motivation
 
 In September 2020, TypeKit has released a font-display option via [Adobe Fonts Dashboard](https://fonts.adobe.com/my_fonts#web_projects-section) for better web performance.
@@ -45,7 +53,7 @@ Using the TypeKitProxyApp, it can be changed to `"display":"swap"`
 #### JS Example
 
 ```html
-<script type="text/javascript" src="https://tk.gaurangjadia.com/yyj6orp.js"></script>
+<script type="text/javascript" src="https://typekitproxy.com/yyj6orp.js"></script>
 <script type="text/javascript">try{Typekit.load({async:true});}catch(ex){console.log(ex)}</script>
 ```
 
@@ -64,7 +72,7 @@ Using the TypeKitProxyApp, it can be changed to `font-display:swap`
 #### CSS Example
 
 ```html
-<link href="https://tk.gaurangjadia.com/yyj6orp.css" rel="stylesheet">
+<link href="https://typekitproxy.com/yyj6orp.css" rel="stylesheet">
 ```
 
 [![TypeKitProxy_CSS](https://d53rw4264h5bq.cloudfront.net/7d8dbf00-4ce2-11e4-95e5-9a4caf8aa59c/16ed74b4-e526-49d3-b6b4-bf460c255ebd.png)](https://user-images.githubusercontent.com/430637/166125258-1a29a5fd-c84c-4d9a-97ff-7010b050f98a.png)
