@@ -1,4 +1,4 @@
-# fly.toml file generated for typekit-proxy-app on 2022-05-21T11:30:40-07:00
+# fly.toml file generated for typekit-proxy-app on 2022-05-21T11:08:23-07:00
 
 app = "typekit-proxy-app"
 
@@ -13,7 +13,6 @@ processes = []
   auto_rollback = true
 
 [[services]]
-  #http_checks = []
   internal_port = 80
   processes = ["app"]
   protocol = "tcp"
@@ -23,6 +22,18 @@ processes = []
     hard_limit = 25
     soft_limit = 20
     type = "connections"
+
+  [[services.http_checks]]
+    grace_period = "15s"
+    interval = "30s"
+    method = "get"
+    path = "/health"
+    protocol = "http"
+    restart_limit = 0
+    timeout = "10s"
+    tls_skip_verify = false
+
+    [services.http_checks.headers]
 
   [[services.ports]]
     force_https = true
@@ -38,14 +49,3 @@ processes = []
     interval = "15s"
     restart_limit = 0
     timeout = "2s"
-  
-  [[services.http_checks]]
-    interval = "30s"
-    grace_period = "15s"
-    method = "get"
-    path = "/health"
-    protocol = "http"
-    restart_limit = 0
-    timeout = "10s"
-    tls_skip_verify = false
-    [services.http_checks.headers]
